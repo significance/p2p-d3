@@ -1,0 +1,62 @@
+* {
+  font-family: sans-serif;
+}
+
+body {
+  background: black;
+}
+
+#network-visualisation {
+  border: solid 1pt #2b2a2a;
+/*  width: 80vh;
+  height: 80vh;*/
+  padding: 0px;
+  margin: 10px 20px;
+  float:left;
+}
+
+/*visualisation*/
+  .links line {
+    stroke: white;
+    stroke-opacity: 0.6;
+  }
+
+  .nodes circle {
+    stroke: white;
+    stroke-width: 1.5px;
+  }
+/*end visualisation*/
+
+.sidebar {
+  height:80vh;
+  width:38vh;
+  float:left;
+  margin: 10px 0px;  
+  border: solid 1pt #2b2a2a;
+  color: lightgrey;
+  padding:1vh;
+}
+
+h1 {
+  color: white;
+  letter-spacing: 0.04em;
+  font-size:14pt;
+  margin-left:20px;
+  padding-bottom:15px;
+  margin-bottom:10px;
+  border-bottom: 1px solid lightgrey;
+}
+
+p{
+  margin-left:10px;
+}
+
+a{
+  cursor: pointer;
+}
+
+label{
+  margin-right:15px;
+}
+
+

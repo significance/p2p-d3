@@ -9,6 +9,8 @@
 /bower_components
 
 # misc
+/.nvmrc
+*.DS_Store
 /.sass-cache
 /connect.lock
 /coverage/*
