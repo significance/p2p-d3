@@ -1,6 +1,10 @@
 import Ember from 'ember';
 import VisualisationMixin from '../mixins/visualisation';
 
+function generateUID() {
+            return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
+        }
+
 export default Ember.Controller.extend(VisualisationMixin, {
     init() {
         this._super();
@@ -80,7 +84,7 @@ export default Ember.Controller.extend(VisualisationMixin, {
 
                 simulation.force("link")
                     .links(self.graphLinks)
-                    .distance(function(l,i){return (22-l.value)*22;});
+                    // .distance(function(l,i){return (22-l.value)*22;});
 
                 self.node
                     .attr("cx", function(d) { return d.x; })
@@ -121,42 +125,62 @@ export default Ember.Controller.extend(VisualisationMixin, {
             }); 
         },
         restartVisualisation(){
-            var rand1 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
-            var rand2 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
 
-            this.graphLinks.push({source: rand1, target: rand2, group: 1, value: 1 }); // Add a-b.
+            var randID = generateUID();
+            console.log(randID)
 
-            // this.graphLinks.pop();
+            var newNode = {id: generateUID(), group: 2 }
+
+            this.graphNodes.push(newNode);
+
+            this.node = this.node.data(this.graphNodes, function(d) { return d.id;});
+            // this.node.exit().remove();
+            this.node = this.node
+                            .enter()
+                            .append("circle")
+                            .attr("fill", function(d) { return d3.scaleOrdinal(d3.schemeCategory20)(d.group) }).attr("r", 8)
+                            .merge(this.node);
+  
+
+            // this.graphNodes.pop();
+
+
+
+
+
 
             // Apply the general update pattern to the links.
             this.link = this.link.data(this.graphLinks);
 
             // remove old links
-            this.link.exit().remove();
+            // this.graphLinks.pop();
+            // this.link.exit().remove();
 
             // add new links
             this.link = this.link.enter().append("line").merge(this.link);
 
-            var randID = Date.now
-            console.log(randID)
+            var randNode1 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
+            var randNode2 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
+            var randNode3 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
 
-            // this.graphNodes.push({id: randID+"", group: 2 });
+            this.graphLinks.push({source: newNode, target: randNode2, group: 1, value: 1 }); // Add a-b.
+            this.graphLinks.push({source: newNode, target: randNode2, group: 1, value: 1 }); // Add a-b.
+            this.graphLinks.push({source: newNode, target: randNode3, group: 1, value: 1 }); // Add a-b.
 
-            // this.node = this.node.data(this.graphNodes, function(d) { return d.id;});
-            // this.node.exit().remove();
-            // this.node = this.node
-            //                 .enter()
-            //                 .append("circle")
-            //                 // .attr("fill", function(d) { return color(d.id); }).attr("r", 8)
-            //                 .merge(this.node);
-  
 
-            // this.graphNodes.pop();
             // console.log(this.graphNodes)
 
+
+            this.svg = d3.select("svg");
+            this.width = this.svg.attr("width");
+            this.height = +this.svg.attr("height");
+
             // Update and restart the simulation.
-            // this.simulation.nodes(this.graphNodes);
-            this.simulation.force("link").links(this.graphLinks);
+            this.simulation.nodes(this.graphNodes);            
+            this.simulation.force("link").links(this.graphLinks)
+            
+            // this.simulation.force("center", d3.forceCenter(300, 200));
+
             this.simulation.alpha(1).restart();
         }
     }
