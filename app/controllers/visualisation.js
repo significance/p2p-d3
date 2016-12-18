@@ -112,7 +112,7 @@ class P2Pd3 {
     // this.graphLinks = links;
     this.link = this.appendLinks(newLinks);
 
-    this.appendNode(newNode);
+    this.node = this.appendNode(newNode);
 
     console.log(this.graphNodes);
     console.log(this.graphLinks);
@@ -123,7 +123,6 @@ class P2Pd3 {
 
     $(this.graphLinks).each(function(i,c){console.log(c.target,c.source)})
     $(this.graphNodes).each(function(i,c){console.log(c)})
-    debugger
     // this.simulation.force("center", d3.forceCenter(300, 200));
 
     this.simulation.alpha(1).restart();
@@ -142,22 +141,19 @@ class P2Pd3 {
                     .attr("x",500)
                     .merge(this.node);
 
-    return this.node;    
+    return this.node;
   }
 
   appendLinks(links){
 
-    this.graphLinks = this.graphLinks.toArray().concat(links);
+    this.graphLinks = this.graphLinks.concat(links);
 
     // Apply the general update pattern to the links.
     this.link = this.link.data(this.graphLinks);
 
     // add new links
     this.link = this.link.enter().append("line").merge(this.link);
-
-    // Apply the general update pattern to the links.
-    this.link = this.link.data(links);
-
+    
     return this.link;
   }
 
