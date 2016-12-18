@@ -139,6 +139,10 @@ class P2Pd3 {
                     .attr("fill", function(d) { return d3.scaleOrdinal(d3.schemeCategory20)(d.group) })
                     .attr("r", 5)
                     .attr("x",500)
+                    .call(d3.drag()
+                      .on("start", function(d){ self.dragstarted(self.simulation, d); } )
+                      .on("drag", function(d){ self.dragged(d); } )
+                      .on("end", function(d){ self.dragended(self.simulation, d); } ))
                     .merge(this.node);
 
     return this.node;
