@@ -1,11 +1,36 @@
 import Ember from 'ember';
-import VisualisationMixin from '../mixins/visualisation';
+
+
+class P2Pd3 {
+
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+
+  initializeVisualisation(svg,nodes,links) {
+    return generateUID();
+  }
+
+  updateVisualisation(nodes,links) {
+
+  }
+
+  generateUID() {
+    return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
+  }
+}
+
+window.visualisation = new P2Pd3(300,200);
+
+
+
 
 function generateUID() {
-            return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
-        }
+    return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
+}
 
-export default Ember.Controller.extend(VisualisationMixin, {
+export default Ember.Controller.extend({
     init() {
         this._super();
         Ember.run.schedule("afterRender",this,function() {
@@ -129,7 +154,7 @@ export default Ember.Controller.extend(VisualisationMixin, {
             var randID = generateUID();
             console.log(randID)
 
-            var newNode = {id: generateUID(), group: 2 }
+            var newNode = {id: randID, group: 2, x: 500, y: 500 }
 
             this.graphNodes.push(newNode);
 
@@ -138,7 +163,9 @@ export default Ember.Controller.extend(VisualisationMixin, {
             this.node = this.node
                             .enter()
                             .append("circle")
-                            .attr("fill", function(d) { return d3.scaleOrdinal(d3.schemeCategory20)(d.group) }).attr("r", 8)
+                            .attr("fill", function(d) { return d3.scaleOrdinal(d3.schemeCategory20)(d.group) })
+                            .attr("r", 5)
+                            .attr("x",500)
                             .merge(this.node);
   
 
@@ -147,17 +174,11 @@ export default Ember.Controller.extend(VisualisationMixin, {
 
 
 
-
-
-            // Apply the general update pattern to the links.
-            this.link = this.link.data(this.graphLinks);
-
             // remove old links
             // this.graphLinks.pop();
             // this.link.exit().remove();
 
-            // add new links
-            this.link = this.link.enter().append("line").merge(this.link);
+
 
             var randNode1 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
             var randNode2 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
@@ -167,9 +188,14 @@ export default Ember.Controller.extend(VisualisationMixin, {
             this.graphLinks.push({source: newNode, target: randNode2, group: 1, value: 1 }); // Add a-b.
             this.graphLinks.push({source: newNode, target: randNode3, group: 1, value: 1 }); // Add a-b.
 
+            // Apply the general update pattern to the links.
+            this.link = this.link.data(this.graphLinks);
 
-            // console.log(this.graphNodes)
+            // add new links
+            this.link = this.link.enter().append("line").merge(this.link);
 
+            // Apply the general update pattern to the links.
+            this.link = this.link.data(this.graphLinks);
 
             this.svg = d3.select("svg");
             this.width = this.svg.attr("width");
