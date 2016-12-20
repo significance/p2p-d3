@@ -106,32 +106,33 @@ class P2Pd3 {
     return this.link;
   }
 
-  updateVisualisation(newNode,newLinks) {
+  updateVisualisation(newNodes,newLinks,removeNodes,removeLinks) {
 
+    var self = this;
 
-    // this.graphLinks = links;
     this.link = this.appendLinks(newLinks);
 
-    this.node = this.appendNode(newNode);
+    this.node = this.appendNodes(newNodes);
 
-    console.log(this.graphNodes);
-    console.log(this.graphLinks);
+    this.node = this.removeNodes(removeNodes);
+
+    this.link = this.removeLinks(removeLinks);
 
     // // Update and restart the simulation.
     this.simulation.nodes(this.graphNodes);            
     this.simulation.force("link").links(this.graphLinks);
 
-    $(this.graphLinks).each(function(i,c){console.log(c.target,c.source)})
-    $(this.graphNodes).each(function(i,c){console.log(c)})
     // this.simulation.force("center", d3.forceCenter(300, 200));
 
     this.simulation.alpha(1).restart();
 
   }
 
-  appendNode(node){
+  appendNodes(nodes){
     var self = this;
-    this.graphNodes.push(node);     
+    for (var i = nodes.length - 1; i >= 0; i--) {
+     this.graphNodes.push(nodes[i]); 
+    }
     this.node = this.node.data(this.graphNodes, function(d) { return d.id;});
     this.node = this.node
                     .enter()
@@ -148,6 +149,13 @@ class P2Pd3 {
     return this.node;
   }
 
+  removeNodes(nodes){
+    this.graphNodes = this.graphNodes.filter(function(n){ return nodes.indexOf(n) < 0; })
+    this.node = this.node.data(this.graphNodes, function(d) { return d.id;});
+    this.node.exit().remove();
+    return this.node;
+  }
+
   appendLinks(links){
 
     this.graphLinks = this.graphLinks.concat(links);
@@ -158,6 +166,13 @@ class P2Pd3 {
     // add new links
     this.link = this.link.enter().append("line").merge(this.link);
     
+    return this.link;
+  }
+
+  removeLinks(links){
+    this.graphLinks = this.graphLinks.filter(function(n){ return links.indexOf(n) < 0; })
+    this.link = this.link.data(this.graphLinks);
+    this.link.exit().remove();
     return this.link;
   }
 
@@ -218,20 +233,50 @@ export default Ember.Controller.extend({
         },
         restartVisualisationWithClass(){
             var randID = generateUID();
+            var randID2 = generateUID();
 
             var newNode = {id: randID, group: 2, x: 500, y: 500 }
+            var newNode2 = {id: randID2, group: 2, x: 500, y: 500 }
             
+            var newNodes = [newNode,newNode2];
+
             var randNode1 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
             var randNode2 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
             var randNode3 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
 
+            var randNode21 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
+            var randNode22 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
+            var randNode23 = this.graphNodes[parseInt(Math.random(0,this.graphNodes.length)*10)];
+
+
+
             var newLinks = []
 
-            newLinks.push({source: newNode, target: randNode2, group: 1, value: 1 }); // Add a-b.
+            newLinks.push({source: newNode, target: randNode1, group: 1, value: 1 }); // Add a-b.
             newLinks.push({source: newNode, target: randNode2, group: 1, value: 1 }); // Add a-b.
             newLinks.push({source: newNode, target: randNode3, group: 1, value: 1 }); // Add a-b.
 
-            this.visualisation.updateVisualisation(newNode,newLinks);
+            newLinks.push({source: newNode2, target: randNode21, group: 1, value: 1 }); // Add a-b.
+            newLinks.push({source: newNode2, target: randNode22, group: 1, value: 1 }); // Add a-b.
+            newLinks.push({source: newNode2, target: randNode23, group: 1, value: 1 }); // Add a-b.
+
+
+            newNodes = []
+            newLinks = []
+            var removeNodes = [randNode1,randNode2];
+            var removeLinks = this.graphLinks.filter(function(l){
+                return randNode1.id == l.source.id || randNode1.id == l.target.id; //connected nodes
+            })
+            var removeLinks2 = this.graphLinks.filter(function(l){
+                return randNode2.id == l.source.id || randNode2.id == l.target.id; //connected nodes
+            })
+            
+            console.log('gl',(this.graphLinks).length)
+            console.log('rl', removeLinks2.length)
+            console.log('rl2',(removeLinks2).length)
+            console.log('rll',(removeLinks+removeLinks2).count)
+
+            this.visualisation.updateVisualisation(newNodes,newLinks,removeNodes,removeLinks.concat(removeLinks2));
 
         }
     }
