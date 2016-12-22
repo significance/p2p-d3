@@ -192,10 +192,26 @@ export default Ember.Controller.extend({
     init() {
         this._super();
         Ember.run.schedule("afterRender",this,function() {
-        this.send("initializeVisualisationWithClass");
+        this.send("initializeServer");
         });
     },
     actions: {
+        initializeServer(){
+          var self = this;
+          $.post('http://localhost:8888/').then(
+            function(d){
+              self.send('initializeMocker');
+            },
+            function(e){ console.log(e); })
+        },
+        initializeMocker(){
+          var self = this;
+          $.post('http://localhost:8888/0/mockevents/').then(
+            function(d){
+              setTimeout(function(){self.send('initializeVisualisationWithClass');},1000);
+            },
+            function(e){ console.log(e); })
+        },
         initializeVisualisationWithClass(){
 
             var self = this;
@@ -204,9 +220,8 @@ export default Ember.Controller.extend({
                 = window.visualisation 
                 = new P2Pd3(d3.select("svg"));
 
-            $.get('example.json').then(
+            $.get('http://localhost:8888/0/').then(
               function(graph){
-
                 self.graphNodes = $(graph.add)
                     .filter(function(i,e){return e.group === 'nodes'})
                     .map(function(i,e){ return {id: e.data.id, group: 1}; })
@@ -224,11 +239,59 @@ export default Ember.Controller.extend({
                     })
                     .toArray();
 
-                self.visualisation.initializeVisualisation(self.graphNodes,self.graphLinks);                
+                self.visualisation.initializeVisualisation(self.graphNodes,self.graphLinks);
+
+                self.visualisationInterval = setInterval(function(){self.send('updateVisualisationWithClass');},1000);
               },
               function(e){ console.log(e); }
             )
 
+
+        },
+        updateVisualisationWithClass(){
+            var self = this;
+            $.get('http://localhost:8888/0/').then(
+                function(graph){
+                    
+                    var newNodes = $(graph.add)
+                    .filter(function(i,e){return e.group === 'nodes'})
+                    .map(function(i,e){ return {id: e.data.id, group: 1}; })
+                    .toArray();
+
+                    var newLinks = $(graph.add)
+                    .filter(function(i,e){return e.group === 'edges'})
+                    .map(function(i,e){ 
+                        return {
+                            source: e.data.source, 
+                            target: e.data.target, 
+                            group: 1,
+                            value: i
+                        };
+                    })
+                    .toArray();
+
+                    var removeNodes = $(graph.remove)
+                    .filter(function(i,e){return e.group === 'nodes'})
+                    .map(function(i,e){ return {id: e.data.id, group: 1}; })
+                    .toArray();
+
+                    var removeLinks = $(graph.remove)
+                    .filter(function(i,e){return e.group === 'edges'})
+                    .map(function(i,e){ 
+                        return {
+                            source: e.data.source, 
+                            target: e.data.target, 
+                            group: 1,
+                            value: i
+                        };
+                    })
+                    .toArray();
+
+                    if(newNodes.length > 0 || newLinks.length > 0 || removeNodes.length > 0 || removeLinks.length > 0 )
+                    self.visualisation.updateVisualisation(newNodes,newLinks,removeNodes,removeLinks);
+                },
+                function(e){ console.log(e); }
+            )
 
         },
         restartVisualisationWithClass(){
@@ -270,11 +333,7 @@ export default Ember.Controller.extend({
             var removeLinks2 = this.graphLinks.filter(function(l){
                 return randNode2.id == l.source.id || randNode2.id == l.target.id; //connected nodes
             })
-            
-            console.log('gl',(this.graphLinks).length)
-            console.log('rl', removeLinks2.length)
-            console.log('rl2',(removeLinks2).length)
-            console.log('rll',(removeLinks+removeLinks2).count)
+          
 
             this.visualisation.updateVisualisation(newNodes,newLinks,removeNodes,removeLinks.concat(removeLinks2));
 
