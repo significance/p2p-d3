@@ -16,7 +16,6 @@ to run this project you will need...
 ```
 git clone git@github.com:significance/p2p-d3.git
 npm install && bower install
-
 ```
 
 ## Run Server
@@ -37,7 +36,9 @@ go run ./whisper/whisperv5/simulations/network.go ./whisper/whisperv5/simulation
 
 Currently using commit 
 
-```0321360a9827de3819704c8a252ea9dcf742e733```
+```
+0321360a9827de3819704c8a252ea9dcf742e733
+```
 
 of [https://github.com/ethersphere/go-ethereum](https://github.com/ethersphere/go-ethereum)
 
