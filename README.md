@@ -1,57 +1,43 @@
-# P2p-d3
+# p2pd3
 
-p2p simulation framework network visualisation demo using d3
+p2p simulation framework network visualisation demo using d3 - **WIP**
 
-## boilerplate from ember-cli
+## Dependencies
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+to run this project you will need...
 
-## Prerequisites
+* [Git](http://git-scm.com/) (install using your package manager)
+* [Node.js](http://nodejs.org/) (install using your package manager)
+* [Bower](http://bower.io/) `npm install -g bower`
+* [Ember CLI](http://ember-cli.com/) `npm install -g ember-cli`
 
-You will need the following things properly installed on your computer.
+## Install
 
-* [Git](http://git-scm.com/)
-* [Node.js](http://nodejs.org/) (with NPM)
-* [Bower](http://bower.io/)
-* [Ember CLI](http://ember-cli.com/)
-* [PhantomJS](http://phantomjs.org/)
+```
+git clone git@github.com:significance/p2p-d3.git
+npm install && bower install
 
-## Installation
+```
 
-* `git clone <repository-url>` this repository
-* `cd p2p-d3`
-* `npm install`
-* `bower install`
+## Run Server
 
-## Running / Development
+```
+ember s
+```
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
+Then navigate to [http://localhost:4200/visualisation](http://localhost:4200/visualisation)
 
-### Code Generators
+## Network Simulation Server
 
-Make use of the many generators for code, try `ember help generate` for more details
+p2pd3 requires you to install geth and run the go simulation server
 
-### Running Tests
+```
+go run ./whisper/whisperv5/simulations/network.go ./whisper/whisperv5/simulations/common.go
+```
 
-* `ember test`
-* `ember test --server`
+Currently using commit 
 
-### Building
+```0321360a9827de3819704c8a252ea9dcf742e733```
 
-* `ember build` (development)
-* `ember build --environment production` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
-
-## Further Reading / Useful Links
-
-* [ember.js](http://emberjs.com/)
-* [ember-cli](http://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+of [https://github.com/ethersphere/go-ethereum](https://github.com/ethersphere/go-ethereum)
 
